@@ -1,0 +1,104 @@
+
+@use '@angular/material' as mat;
+@use 'sass:color';
+@use 'sass:map';
+
+// palette for primary
+$onyx: #171614ff;
+$dark-coffee: #3a2618ff;
+$bitter-chocolate: #754043ff;
+$dusty-taupe: #9a8873ff;
+$charcoal-brown: #37423dff;
+
+$primary-palette: (
+  0: #000000,
+  10: $onyx,
+  20: $dark-coffee,
+  30: $bitter-chocolate,
+  40: color.mix($bitter-chocolate, $dusty-taupe, 50%),
+  50: $dusty-taupe,
+  60: color.mix($dusty-taupe, $charcoal-brown, 50%),
+  70: $charcoal-brown,
+  80: color.mix($charcoal-brown, #ffffff, 30%),
+  90: color.mix($charcoal-brown, #ffffff, 60%),
+  95: color.mix($charcoal-brown, #ffffff, 80%),
+  99: color.mix($charcoal-brown, #ffffff, 95%),
+  100: #ffffff,
+);
+
+// palette for secondary
+$lime-cream: #dde392ff;
+$dry-sage: #afbe8fff;
+$dusty-olive: #7d8570ff;
+$dusty-olive-2: #646f58ff;
+$dark-khaki: #504b3aff;
+
+$secondary-palette: (
+  0: #000000,
+  10: color.mix($dark-khaki, #000000, 50%),
+  20: $dark-khaki,
+  30: $dusty-olive-2,
+  40: $dusty-olive,
+  50: color.mix($dusty-olive, $dry-sage, 50%),
+  60: $dry-sage,
+  70: color.mix($dry-sage, $lime-cream, 50%),
+  80: $lime-cream,
+  90: color.mix($lime-cream, #ffffff, 60%),
+  95: color.mix($lime-cream, #ffffff, 80%),
+  99: color.mix($lime-cream, #ffffff, 95%),
+  100: #ffffff,
+);
+
+// palette for error
+$olive: #7c6a0aff;
+$dry-sage-error: #babd8dff;
+$peach-fuzz: #ffdac6ff;
+$deep-saffron: #fa9500ff;
+$cayenne-red: #eb6424ff;
+
+$error-palette: (
+  0: #000000,
+  10: color.mix($cayenne-red, #000000, 50%),
+  20: $cayenne-red,
+  30: color.mix($cayenne-red, $deep-saffron, 50%),
+  40: $deep-saffron,
+  50: color.mix($deep-saffron, $olive, 50%),
+  60: $olive,
+  70: $dry-sage-error,
+  80: $peach-fuzz,
+  90: color.mix($peach-fuzz, #ffffff, 60%),
+  95: color.mix($peach-fuzz, #ffffff, 80%),
+  99: color.mix($peach-fuzz, #ffffff, 95%),
+  100: #ffffff,
+);
+
+html {
+  height: 100%;
+  @include mat.theme((
+    color: (
+      theme-type: dark,
+      primary: $primary-palette,
+      secondary: $secondary-palette,
+      tertiary: mat.$orange-palette,
+      error: $error-palette,
+    ),
+    typography: Roboto,
+    density: 0,
+  ));
+
+  @include mat.toolbar-overrides((
+    container-background-color: $dusty-olive-2,
+    container-text-color: $dark-khaki,
+  ));
+}
+
+body {
+  color-scheme: dark;
+  background-color: $dark-coffee;
+  color: $lime-cream;
+  font: var(--mat-sys-body-medium);
+
+  // Reset the user agent margin.
+  margin: 0;
+  height: 100%;
+}
