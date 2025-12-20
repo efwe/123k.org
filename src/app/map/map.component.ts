@@ -1,40 +1,61 @@
 import {AfterViewInit, ChangeDetectionStrategy, Component, OnDestroy} from '@angular/core';
 import {MatGridListModule} from '@angular/material/grid-list';
 import {Map, TileLayer} from 'leaflet';
-import "leaflet/dist/leaflet.css";
+import 'leaflet/dist/leaflet.css';
 
 @Component({
   selector: 'app-map',
   imports: [MatGridListModule],
   template: `
-    <mat-grid-list cols="10" rowHeight="100%">
-      <mat-grid-tile colspan="9">
-        <div #mapContainer id="map"></div>
-      </mat-grid-tile>
-      <mat-grid-tile colspan="1">
-        <!-- List of images will go here -->
-      </mat-grid-tile>
-    </mat-grid-list>
+    <div class="map-layout">
+      <div class="map-panel" id="map"></div>
+
+      <div class="picture-panel">
+        <!-- right column  -->
+      </div>
+    </div>
   `,
-  styles: `
+  styles: [`
     :host
       display: block
       height: calc(100dvh - 64px)
 
-    #map
-      height: 100%
-      background-color: #f0f0f0
+    .map-layout
+      display: grid
+      height: calc(100dvh - 64px)
 
-    mat-grid-list
+    /* Large / medium: map left, pictures right */
+    @media (min-width: 960px)
+      .map-layout
+        grid-template-columns: 4fr 1fr
+        grid-template-rows: auto
+        grid-template-areas: "map pics"
+
+    /* Small and very small:  map on top, pictures below */
+    @media (max-width: 959px)
+      .map-layout
+        grid-template-columns: 1fr
+        grid-template-rows: auto auto
+        grid-template-areas: "map" "pics"
+
+    /* Assign areas */
+    .map-panel
+      grid-area: map
+      background: #f0f0f0
       height: 100%
 
-    ::ng-deep .mat-grid-tile-content
-      display: block !important
-  `,
+    .picture-panel
+      grid-area: pics
+      background: olive
+      height: 100%
+  `],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MapComponent implements OnDestroy, AfterViewInit {
   private map?: Map;
+
+  constructor() {
+  }
 
   ngAfterViewInit(): void {
     if (!this.map) {
@@ -47,7 +68,7 @@ export class MapComponent implements OnDestroy, AfterViewInit {
 
     new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
-      attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+      attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
     }).addTo(this.map);
 
     this.map.invalidateSize();
