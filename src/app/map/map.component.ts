@@ -1,61 +1,28 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, OnDestroy} from '@angular/core';
-import {MatGridListModule} from '@angular/material/grid-list';
-import {Map, TileLayer} from 'leaflet';
+import {AfterViewInit, ChangeDetectionStrategy, Component, input, OnDestroy} from '@angular/core';
+import {LatLng, Map, TileLayer} from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
 @Component({
   selector: 'app-map',
-  imports: [MatGridListModule],
+  imports: [],
   template: `
-    <div class="map-layout">
-      <div class="map-panel" id="map"></div>
-
-      <div class="picture-panel">
-        <!-- right column  -->
-      </div>
-    </div>
+    <div id="map"></div>
   `,
   styles: [`
     :host
       display: block
-      height: calc(100dvh - 64px)
-
-    .map-layout
-      display: grid
-      height: calc(100dvh - 64px)
-
-    /* Large / medium: map left, pictures right */
-    @media (min-width: 960px)
-      .map-layout
-        grid-template-columns: 4fr 1fr
-        grid-template-rows: auto
-        grid-template-areas: "map pics"
-
-    /* Small and very small:  map on top, pictures below */
-    @media (max-width: 959px)
-      .map-layout
-        grid-template-columns: 1fr
-        grid-template-rows: auto auto
-        grid-template-areas: "map" "pics"
-
-    /* Assign areas */
-    .map-panel
-      grid-area: map
-      background: #f0f0f0
       height: 100%
+      width: 100%
 
-    .picture-panel
-      grid-area: pics
-      background: olive
+    #map
       height: 100%
+      width: 100%
   `],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MapComponent implements OnDestroy, AfterViewInit {
   private map?: Map;
-
-  constructor() {
-  }
+  center = input<[number, number]>([0, 0]);
 
   ngAfterViewInit(): void {
     if (!this.map) {
@@ -64,7 +31,8 @@ export class MapComponent implements OnDestroy, AfterViewInit {
   }
 
   private initMap(): void {
-    this.map = new Map('map').setView([50, 20], 12);
+    const [lat, lng] = this.center();
+    this.map = new Map('map').setView([lat, lng], 12);
 
     new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
