@@ -1,6 +1,8 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, input, OnDestroy} from '@angular/core';
-import {LatLng, Map, TileLayer} from 'leaflet';
+import {AfterViewInit, ChangeDetectionStrategy, Component, inject, input, OnDestroy, output} from '@angular/core';
+import {LatLngBounds, LatLngExpression, Map, TileLayer} from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import {INITIAL_CENTER} from '../app.tokens';
+
 
 @Component({
   selector: 'app-map',
@@ -22,7 +24,9 @@ import 'leaflet/dist/leaflet.css';
 })
 export class MapComponent implements OnDestroy, AfterViewInit {
   private map?: Map;
-  center = input<[number, number]>([0, 0]);
+
+  center = input<LatLngExpression>(inject(INITIAL_CENTER));
+  boundsChange = output<LatLngBounds>();
 
   ngAfterViewInit(): void {
     if (!this.map) {
@@ -31,15 +35,19 @@ export class MapComponent implements OnDestroy, AfterViewInit {
   }
 
   private initMap(): void {
-    const [lat, lng] = this.center();
-    this.map = new Map('map').setView([lat, lng], 12);
+    this.map = new Map('map').setView(this.center(), 12);
 
     new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
       attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
     }).addTo(this.map);
 
-    this.map.invalidateSize();
+    this.map.on('moveend', () => {
+      this.boundsChange.emit(this.map!.getBounds());
+    });
+
+    // Initial emit
+    this.boundsChange.emit(this.map.getBounds());
   }
 
   ngOnDestroy(): void {
