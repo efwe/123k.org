@@ -1,10 +1,9 @@
 <div class="map-layout">
   <div class="map-panel">
-
-    <app-map [center]="[50, 20]" (boundsChange)="onBoundsChange($event)" />
+    <app-map (boundsChange)="onBoundsChange($event)" />
   </div>
 
-  <div class="picture-panel">
+  <div class="snap-panel">
       <app-snaps [box]="box()" />
   </div>
 </div>

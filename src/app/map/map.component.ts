@@ -19,6 +19,7 @@ import {INITIAL_CENTER} from '../app.tokens';
     #map
       height: 100%
       width: 100%
+      min-height: 800px
   `],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -35,7 +36,7 @@ export class MapComponent implements OnDestroy, AfterViewInit {
   }
 
   private initMap(): void {
-    this.map = new Map('map').setView(this.center(), 12);
+    this.map = new Map('map').setView(this.center(), 13);
 
     new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,

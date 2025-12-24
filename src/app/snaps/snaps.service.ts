@@ -16,8 +16,6 @@ export class SnapsService {
   getSnaps(box: LatLngBounds): Observable<Snap[]> {
     const params = new HttpParams()
       .set('bbox', `${box.getWest()},${box.getSouth()},${box.getEast()},${box.getNorth()}`);
-    console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx "+ params.toString());
-    //return of([{ id: 1 } as unknown as Snap]); // dummy
     return this.http.get<Snap[]>(`${this.apiUrl}/snaps`, { params });
   }
 }
