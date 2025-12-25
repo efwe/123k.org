@@ -1,9 +1,10 @@
-import {Component, ChangeDetectionStrategy, signal, inject, computed} from '@angular/core';
+import {ChangeDetectionStrategy, Component, inject, signal} from '@angular/core';
 import {MatGridListModule} from '@angular/material/grid-list';
 import {MapComponent} from '../map/map.component';
 import {SnapsComponent} from '../snaps/snaps.component';
-import {LatLngBounds, LatLng, latLng} from 'leaflet';
-import {INITIAL_CENTER} from '../app.tokens';
+import {LatLngBounds} from 'leaflet';
+import {SnapsService} from '../snaps/snaps.service';
+import {Snap} from '../snaps/snap.model';
 
 @Component({
   selector: 'app-main',
@@ -13,17 +14,13 @@ import {INITIAL_CENTER} from '../app.tokens';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Main {
+  private snapsService = inject(SnapsService);
 
-  box = signal<LatLngBounds>((() => {
-    const center = latLng(inject(INITIAL_CENTER));
-    const latOffset = 0.225;
-    const lngOffset = 0.225;
-    const southWest = new LatLng(center.lat - latOffset, center.lng - lngOffset);
-    const northEast = new LatLng(center.lat + latOffset, center.lng + lngOffset);
-    return new LatLngBounds(southWest, northEast);
-  })());
+  snaps = signal<Snap[]>([]);
 
   onBoundsChange(bounds: LatLngBounds) {
-    this.box.set(bounds);
+    this.snapsService.getSnaps(bounds).subscribe(snaps => {
+      this.snaps.set(snaps);
+    });
   }
 }

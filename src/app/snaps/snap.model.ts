@@ -6,5 +6,10 @@ export interface Snap {
   server: string;
   location: [number, number]; // [latitude, longitude] as per Location.java @JsonProperty("location")
   thumbNailUrl: string;
+  thumbNailWidth: number;
+  thumbNailHeight: number;
   imageUrl: string;
+  imageWidth: number;
+  imageHeight: number;
+  dateTaken: Date;
 }

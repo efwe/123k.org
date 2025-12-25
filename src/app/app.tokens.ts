@@ -1,4 +1,4 @@
-import {Component, InjectionToken} from '@angular/core';
+import {InjectionToken} from '@angular/core';
 import {LatLngExpression} from 'leaflet';
 
 export const API_URL = new InjectionToken<string>('API_URL');

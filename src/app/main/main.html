@@ -1,9 +1,9 @@
 <div class="map-layout">
   <div class="map-panel">
-    <app-map (boundsChange)="onBoundsChange($event)" />
+    <app-map [snaps]="snaps()" (boundsChange)="onBoundsChange($event)"/>
   </div>
 
   <div class="snap-panel">
-      <app-snaps [box]="box()" />
+    <app-snaps [snaps]="snaps()"/>
   </div>
 </div>

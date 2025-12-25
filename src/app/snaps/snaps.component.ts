@@ -1,10 +1,7 @@
-import {ChangeDetectionStrategy, Component, computed, inject, input, signal} from '@angular/core';
-import {SnapsService} from './snaps.service';
-import {LatLngBounds} from 'leaflet';
-import {toObservable, toSignal} from '@angular/core/rxjs-interop';
-import {distinctUntilChanged, switchMap} from 'rxjs';
-import { SnapCardComponent } from './snap-card.component';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import {ChangeDetectionStrategy, Component, computed, input, signal} from '@angular/core';
+import {SnapCardComponent} from './snap-card.component';
+import {MatPaginatorModule, PageEvent} from '@angular/material/paginator';
+import {Snap} from './snap.model';
 
 @Component({
   selector: 'app-snaps',
@@ -46,21 +43,13 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SnapsComponent {
-  private snapsService = inject(SnapsService);
 
-  box = input.required<LatLngBounds>();
-
+  snaps = input.required<Snap[]>();
   pageSize = signal(5);
   pageIndex = signal(0);
 
-  snaps = toSignal(
-    toObservable(this.box).pipe(switchMap(box => {
-        this.pageIndex.set(0);
-        return this.snapsService.getSnaps(box);
-      })
-    ),
-    { initialValue: [] }
-  );
+  constructor() {
+  }
 
   pagedSnaps = computed(() => {
     const start = this.pageIndex() * this.pageSize();
