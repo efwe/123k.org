@@ -4,12 +4,13 @@
   </button>
   <span>123K.org</span>
   <span class="toolbar-spacer"></span>
-  <button matIconButton class="example-icon favorite-icon" aria-label="Example icon-button with heart icon">
-    <mat-icon>favorite</mat-icon>
-  </button>
-  <button matIconButton class="example-icon" aria-label="Example icon-button with share icon">
+  <a matIconButton class="example-icon mail-icon" aria-label="Send email to fw@123k.org" href="mailto:fw@123k.org">
+    <mat-icon>mail</mat-icon>
+  </a>
+  <a matIconButton class="example-icon" aria-label="Share on GitHub" href="https://github.com/efwe" target="_blank"
+     rel="noopener noreferrer">
     <mat-icon>share</mat-icon>
-  </button>
+  </a>
 </mat-toolbar>
 
 <router-outlet />

@@ -19,7 +19,9 @@ import {Snap} from './snap.model';
         [length]="snaps().length"
         [pageSize]="pageSize()"
         [pageIndex]="pageIndex()"
-        [pageSizeOptions]="[5, 10, 25, 100]"
+        [showFirstLastButtons]="true"
+        [hidePageSize]="true"
+        [pageSizeOptions]="[]"
         (page)="handlePageEvent($event)"
         aria-label="Select page of snaps">
       </mat-paginator>
@@ -33,8 +35,8 @@ import {Snap} from './snap.model';
     .snap-layout
       display: grid
       grid-template-columns: repeat(auto-fill, minmax(200px, 1fr))
-      gap: 1rem
-      padding: 1rem
+      gap: 0.5rem
+      padding: 0.5rem
       flex: 1
 
     mat-paginator

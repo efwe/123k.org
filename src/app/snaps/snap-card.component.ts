@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
-import { NgOptimizedImage } from '@angular/common';
+import {DatePipe, NgOptimizedImage} from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -44,7 +44,7 @@ export class SnapCardComponent {
 
   openImage() {
     this.dialog.open(SnapImageDialogComponent, {
-      data: { imageUrl: this.snap().imageUrl, title: this.snap().title },
+      data: { imageUrl: this.snap().imageUrl, title: this.snap().dateTaken },
       maxWidth: '90vw',
       maxHeight: '90vh',
     });
@@ -53,9 +53,9 @@ export class SnapCardComponent {
 
 @Component({
   selector: 'app-snap-image-dialog',
-  imports: [NgOptimizedImage, MatDialogModule, MatButtonModule],
+  imports: [NgOptimizedImage, MatDialogModule, MatButtonModule, DatePipe],
   template: `
-    <h2 mat-dialog-title id="snap-dialog-title">{{ data.title }}</h2>
+    <h2 mat-dialog-title id="snap-dialog-title">{{ data.title | date:'medium' }}</h2>
     <mat-dialog-content aria-labelledby="snap-dialog-title">
       <div class="image-container">
         <img [ngSrc]="data.imageUrl"

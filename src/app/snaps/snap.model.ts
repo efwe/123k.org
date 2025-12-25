@@ -11,5 +11,5 @@ export interface Snap {
   imageUrl: string;
   imageWidth: number;
   imageHeight: number;
-  dateTaken: Date;
+  dateTaken: string;
 }

@@ -70,11 +70,9 @@ export class MapComponent implements OnDestroy, AfterViewInit {
 
     // Initial
     this.boundsChange.emit(this.map.getBounds());
-    //this.renderMarkers(this.snaps());
   }
 
   private renderMarkers(snaps: Snap[]): void {
-      console.log('renderMarkers', snaps);
     if (!this.markersLayer || !this.map) {
       return;
     }
@@ -98,6 +96,9 @@ export class MapComponent implements OnDestroy, AfterViewInit {
   ngOnDestroy(): void {
     if (this.map) {
       this.map.remove();
+    }
+    if(this.markersLayer) {
+      this.markersLayer.remove()
     }
   }
 }
