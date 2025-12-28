@@ -6,7 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "deploy": "ng build --configuration production && ssh fw@hilda.123k.org 'rm -rf /var/www/123k.org/*' && scp -r dist/zmapz/browser/* fw@hilda.123k.org:/var/www/123k.org"
   },
   "prettier": {
     "printWidth": 100,
@@ -23,6 +24,7 @@
   "private": true,
   "packageManager": "yarn@1.22.22",
   "dependencies": {
+    "@angular/animations": "^21.0.0",
     "@angular/cdk": "21.0.5",
     "@angular/common": "^21.0.0",
     "@angular/compiler": "^21.0.0",

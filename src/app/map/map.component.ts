@@ -8,8 +8,7 @@ import {
   OnDestroy,
   output
 } from '@angular/core';
-import {LatLngBounds, LatLngExpression, LayerGroup, Map, Marker, TileLayer} from 'leaflet';
-import 'leaflet/dist/leaflet.css';
+import {Icon, LatLngBounds, LatLngExpression, LayerGroup, Map, Marker, TileLayer} from 'leaflet';
 import {INITIAL_CENTER} from '../app.tokens';
 import {Snap} from '../snaps/snap.model';
 
@@ -85,7 +84,9 @@ export class MapComponent implements OnDestroy, AfterViewInit {
     }
 
     for (const snap of snaps) {
-      const marker = new Marker(snap.location);
+      const marker = new Marker(snap.location,{
+        icon: new Icon({iconUrl: 'assets/leaflet/marker-icon.png'})
+      });
       marker.bindPopup(`
         <img src="${snap.thumbNailUrl}" alt="${snap.title}" width="${snap.thumbNailWidth}" height="${snap.thumbNailHeight}" style="display: block; margin: 0 auto;">
       `);
