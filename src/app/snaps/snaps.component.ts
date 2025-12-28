@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, computed, input, signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, input, linkedSignal, signal} from '@angular/core';
 import {SnapCardComponent} from './snap-card.component';
 import {MatPaginatorModule, PageEvent} from '@angular/material/paginator';
 import {Snap} from './snap.model';
@@ -48,7 +48,10 @@ export class SnapsComponent {
 
   snaps = input.required<Snap[]>();
   pageSize = signal(5);
-  pageIndex = signal(0);
+  pageIndex = linkedSignal({
+    source: this.snaps,
+    computation: () => 0,
+  });
 
   constructor() {
   }
