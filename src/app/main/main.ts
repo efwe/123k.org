@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, inject, signal} from '@angular/core';
 import {MatGridListModule} from '@angular/material/grid-list';
-import {MapComponent} from '../map/map.component';
+import {SnapsMapComponent} from '../snaps/snaps-map.component';
 import {SnapsComponent} from '../snaps/snaps.component';
 import {LatLngBounds} from 'leaflet';
 import {SnapsService} from '../snaps/snaps.service';
@@ -8,7 +8,7 @@ import {Snap} from '../snaps/snap.model';
 
 @Component({
   selector: 'app-main',
-  imports: [MatGridListModule, MapComponent, SnapsComponent],
+  imports: [MatGridListModule, SnapsMapComponent, SnapsComponent],
   templateUrl: './main.html',
   styleUrl: './main.sass',
   changeDetection: ChangeDetectionStrategy.OnPush,

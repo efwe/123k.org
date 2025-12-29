@@ -2,22 +2,23 @@ import {
   AfterViewInit,
   ChangeDetectionStrategy,
   Component,
-  effect,
+  ElementRef,
   inject,
   input,
   OnDestroy,
-  output
+  output,
+  signal,
+  viewChild
 } from '@angular/core';
-import {Icon, LatLngBounds, LatLngExpression, LayerGroup, Map, Marker, TileLayer} from 'leaflet';
+import {LatLngBounds, LatLngExpression, Map, TileLayer} from 'leaflet';
 import {INITIAL_CENTER} from '../app.tokens';
-import {Snap} from '../snaps/snap.model';
 
 
 @Component({
   selector: 'app-map',
   imports: [],
   template: `
-    <div id="map"></div>
+    <div #mapContainer class="map-container"></div>
   `,
   styles: [`
     :host
@@ -25,7 +26,7 @@ import {Snap} from '../snaps/snap.model';
       height: 100%
       width: 100%
 
-    #map
+    .map-container
       height: 100%
       width: 100%
       min-height: 800px
@@ -33,73 +34,48 @@ import {Snap} from '../snaps/snap.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MapComponent implements OnDestroy, AfterViewInit {
-  private map?: Map;
-  private markersLayer?: LayerGroup;
+  private map = signal<Map | undefined>(undefined);
+  private _bounds = signal<LatLngBounds | undefined>(undefined);
+  private mapContainer = viewChild.required<ElementRef<HTMLDivElement>>('mapContainer');
 
   center = input<LatLngExpression>(inject(INITIAL_CENTER));
-  snaps = input<Snap[]>([]);
   boundsChange = output<LatLngBounds>();
 
-  constructor() {
-    // Leaflet has imperative API - effects are OK here
-    effect(() => {
-      this.renderMarkers(this.snaps());
-    });
-  }
+  readonly leafletMap = this.map.asReadonly();
+  readonly bounds = this._bounds.asReadonly();
 
   ngAfterViewInit(): void {
-    if (!this.map) {
+    if (!this.map()) {
       this.initMap();
     }
   }
 
   private initMap(): void {
-    this.map = new Map('map').setView(this.center(), 13);
+    const m = new Map(this.mapContainer().nativeElement).setView(this.center(), 13);
 
     new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
       attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-    }).addTo(this.map);
+    }).addTo(m);
 
-    this.markersLayer = new LayerGroup().addTo(this.map);
-
-    this.map.on('moveend', () => {
-      this.boundsChange.emit(this.map!.getBounds());
+    m.on('moveend', () => {
+      const b = m.getBounds();
+      this._bounds.set(b);
+      this.boundsChange.emit(b);
     });
 
+    this.map.set(m);
+
     // Initial
-    this.boundsChange.emit(this.map.getBounds());
-  }
-
-  private renderMarkers(snaps: Snap[]): void {
-    if (!this.markersLayer || !this.map) {
-      return;
-    }
-
-    // clear previous markers
-    this.markersLayer.clearLayers();
-
-    if (snaps.length === 0) {
-      return;
-    }
-
-    for (const snap of snaps) {
-      const marker = new Marker(snap.location,{
-        icon: new Icon({iconUrl: 'assets/leaflet/marker-icon.png'})
-      });
-      marker.bindPopup(`
-        <img src="${snap.thumbNailUrl}" alt="${snap.title}" width="${snap.thumbNailWidth}" height="${snap.thumbNailHeight}" style="display: block; margin: 0 auto;">
-      `);
-      marker.addTo(this.markersLayer);
-    }
+    const initialBounds = m.getBounds();
+    this._bounds.set(initialBounds);
+    this.boundsChange.emit(initialBounds);
   }
 
   ngOnDestroy(): void {
-    if (this.map) {
-      this.map.remove();
-    }
-    if(this.markersLayer) {
-      this.markersLayer.remove()
+    const m = this.map();
+    if (m) {
+      m.remove();
     }
   }
 }
