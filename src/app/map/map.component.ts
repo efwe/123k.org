@@ -2,6 +2,7 @@ import {
   AfterViewInit,
   ChangeDetectionStrategy,
   Component,
+  effect,
   ElementRef,
   inject,
   input,
@@ -43,6 +44,16 @@ export class MapComponent implements OnDestroy, AfterViewInit {
 
   readonly leafletMap = this.map.asReadonly();
   readonly bounds = this._bounds.asReadonly();
+
+  constructor() {
+    effect(() => {
+      const c = this.center();
+      const m = this.map();
+      if (m) {
+        m.setView(c, m.getZoom());
+      }
+    });
+  }
 
   ngAfterViewInit(): void {
     if (!this.map()) {

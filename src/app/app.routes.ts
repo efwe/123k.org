@@ -6,4 +6,14 @@ export const routes: Routes = [
     path: 'index',
     loadComponent: () => import('./main/main').then((m) => m.Main),
   },
+  {
+    path: 'geohashing',
+    loadComponent: () =>
+      import('./geohashing/geo-hash-map.component').then((m) => m.GeoHashMapComponent),
+  },
+  {
+    path: 'geohashing/:lat/:lng',
+    loadComponent: () =>
+      import('./geohashing/geo-hash-map.component').then((m) => m.GeoHashMapComponent),
+  },
 ];

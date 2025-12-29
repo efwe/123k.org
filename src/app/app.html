@@ -1,13 +1,17 @@
 <mat-toolbar>
-  <button matIconButton class="example-icon" aria-label="Example icon-button with menu icon">
+  <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with menu icon">
     <mat-icon>menu</mat-icon>
   </button>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item routerLink="/">Snaps</button>
+    <button mat-menu-item routerLink="/geohashing">Geohashing</button>
+  </mat-menu>
   <span>123K.org</span>
   <span class="toolbar-spacer"></span>
-  <a matIconButton class="example-icon mail-icon" aria-label="Send email to fw@123k.org" href="mailto:fw@123k.org">
+  <a mat-icon-button class="example-icon mail-icon" aria-label="Send email to fw@123k.org" href="mailto:fw@123k.org">
     <mat-icon>mail</mat-icon>
   </a>
-  <a matIconButton class="example-icon" aria-label="Share on GitHub" href="https://github.com/efwe" target="_blank"
+  <a mat-icon-button class="example-icon" aria-label="Share on GitHub" href="https://github.com/efwe" target="_blank"
      rel="noopener noreferrer">
     <mat-icon>share</mat-icon>
   </a>
