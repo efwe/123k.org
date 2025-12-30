@@ -6,6 +6,19 @@
   display: grid
   height: calc(100dvh - 64px)
 
+/* Large / medium: map left, pictures right */
+@media (min-width: 960px)
+  .map-layout
+    grid-template-columns: 4fr 1fr
+    grid-template-rows: auto
+    grid-template-areas: "map pics"
+
+/* Small and very small:  map on top, pictures below */
+@media (max-width: 959px)
+  .map-layout
+    grid-template-columns: 1fr
+    grid-template-rows: auto auto
+    grid-template-areas: "map" "pics"
 
 /* Assign areas */
 .map-panel
@@ -16,33 +29,3 @@
 .snap-panel
   grid-area: pics
   height: 100%
-
-
-/* Large / medium: map left, pictures right */
-@media (min-width: 960px)
-  .map-layout
-    grid-template-columns: 4fr 1fr
-    grid-template-rows: auto
-    grid-template-areas: "map pics"
-
-/* Small and very small:  map on top, pictures below */
-@media (max-width: 959px)
-  :host
-    /* Let the host grow with content instead of locking it */
-    height: auto
-
-  .map-layout
-    grid-template-columns: 1fr
-    grid-template-rows: auto auto
-    grid-template-areas: "map" "pics"
-    /* Let the grid follow its content */
-    height: auto
-
-  .map-panel
-    /* Give the map a reasonable fixed height on small screens */
-    height: 50vh
-    max-height: 60vh
-
-  .snap-panel
-    /* Let snaps take as much height as needed */
-    height: auto
