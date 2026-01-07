@@ -1,7 +1,10 @@
-import {ChangeDetectionStrategy, Component, computed, input, linkedSignal, signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject, input, linkedSignal, signal} from '@angular/core';
 import {SnapCardComponent} from './snap-card.component';
 import {MatPaginatorModule, PageEvent} from '@angular/material/paginator';
 import {Snap} from './snap.model';
+import {BreakpointObserver} from '@angular/cdk/layout';
+import {toSignal} from '@angular/core/rxjs-interop';
+import {map} from 'rxjs/operators';
 
 @Component({
   selector: 'app-snaps',
@@ -45,9 +48,15 @@ import {Snap} from './snap.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SnapsComponent {
+  private breakpointObserver = inject(BreakpointObserver);
+
+  isLargeScreen = toSignal(
+    this.breakpointObserver.observe('(min-width: 1900px)').pipe(map((result) => result.matches)),
+    {initialValue: false},
+  );
 
   snaps = input.required<Snap[]>();
-  pageSize = signal(5);
+  pageSize = linkedSignal(() => (this.isLargeScreen() ? 12 as number : 5 as number));
   pageIndex = linkedSignal({
     source: this.snaps,
     computation: () => 0,
