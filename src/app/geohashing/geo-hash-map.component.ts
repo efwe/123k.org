@@ -9,8 +9,8 @@ import {
   viewChild
 } from '@angular/core';
 import {MapComponent} from '../map/map.component';
-import {Icon, LatLngBounds, LatLngExpression, Marker, Rectangle, LayerGroup} from 'leaflet';
-import {INITIAL_CENTER} from '../app.tokens';
+import {Icon, LatLngBounds, LatLngExpression, Marker, Rectangle, LayerGroup, Circle} from 'leaflet';
+import {GEOHASH_CENTERS, INITIAL_CENTER} from '../app.tokens';
 import {GeoHashService} from './geo-hash.service';
 import {GeoHash} from './geo-hash.model';
 
@@ -18,19 +18,25 @@ import {GeoHash} from './geo-hash.model';
   selector: 'app-geohash-map',
   imports: [MapComponent],
   template: `
-    <app-map [center]="mapCenter()" (boundsChange)="boundsChange.emit($event)" />
+    <div class="geohash-map-container">
+      <app-map [center]="mapCenter()" (boundsChange)="boundsChange.emit($event)" />
+    </div>
   `,
   styles: [`
     :host
-      display: block
+      display: flex
       height: 100%
       width: 100%
+
+    .geohash-map-container
+      flex-grow: 1
   `],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GeoHashMapComponent {
   private readonly geoHashService = inject(GeoHashService);
   private readonly initialCenter = inject(INITIAL_CENTER) as [number, number];
+  private readonly geohashCenters = inject(GEOHASH_CENTERS);
 
   readonly mapComponent = viewChild.required(MapComponent);
 
@@ -51,8 +57,28 @@ export class GeoHashMapComponent {
 
   private markers?: LayerGroup;
   private graticuleLayers?: LayerGroup;
+  private geohashCentersLayers?: LayerGroup;
 
   constructor() {
+    effect(() => {
+      const map = this.mapComponent().leafletMap();
+      if (map) {
+        if (this.geohashCentersLayers) {
+          this.geohashCentersLayers.remove();
+        }
+        this.geohashCentersLayers = new LayerGroup().addTo(map);
+        for (const center of this.geohashCenters) {
+          new Circle(center, {
+            radius: 25000,
+            color: 'lightblue',
+            weight: 2,
+            fillOpacity: 0.2
+          }).addTo(this.geohashCentersLayers);
+        }
+      }
+      map?.setZoom(10)
+    });
+
     effect(() => {
       const g = this.graticule();
       const map = this.mapComponent().leafletMap();
@@ -75,6 +101,7 @@ export class GeoHashMapComponent {
           }
         }
       }
+
     });
 
     effect(() => {

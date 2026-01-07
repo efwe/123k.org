@@ -30,7 +30,6 @@ import {INITIAL_CENTER} from '../app.tokens';
     .map-container
       height: 100%
       width: 100%
-      min-height: 800px
   `],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

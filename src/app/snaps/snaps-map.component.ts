@@ -19,12 +19,7 @@ import {INITIAL_CENTER} from '../app.tokens';
   template: `
     <app-map [center]="center()" (boundsChange)="boundsChange.emit($event)" />
   `,
-  styles: [`
-    :host
-      display: block
-      height: 100%
-      width: 100%
-  `],
+  styles: [],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SnapsMapComponent implements OnDestroy {
