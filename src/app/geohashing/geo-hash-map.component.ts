@@ -13,21 +13,22 @@ import {Icon, LatLngBounds, LatLngExpression, Marker, Rectangle, LayerGroup, Cir
 import {GEOHASH_CENTERS, INITIAL_CENTER} from '../app.tokens';
 import {GeoHashService} from './geo-hash.service';
 import {GeoHash} from './geo-hash.model';
+import {MatTooltip} from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-geohash-map',
-  imports: [MapComponent],
+  imports: [MapComponent, MatTooltip],
   template: `
     <div class="geohash-map-container">
       <app-map [center]="mapCenter()" (boundsChange)="boundsChange.emit($event)"/>
       <div class="control-panel">
-        <button (click)="onForecastClick()" aria-label="Forecast">
+        <button (click)="onForecastClick()" aria-label="Forecast" matTooltip="Forecast">
           <svg viewBox="0 0 24 24" width="24" height="24">
             <path fill="currentColor"
                   d="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4M12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6M12,8A4,4 0 0,0 8,12A4,4 0 0,0 12,16A4,4 0 0,0 16,12A4,4 0 0,0 12,8Z"/>
           </svg>
         </button>
-        <button (click)="onGlobeClick()" aria-label="Globe">
+        <button (click)="onGlobeClick()" aria-label="Globe" matTooltip="Globalhash">
           <svg viewBox="0 0 24 24" width="24" height="24">
             <path fill="currentColor"
                   d="M17.9,17.39C17.64,16.59 16.89,16 16,16H15V13A1,1 0 0,0 14,12H8V10H10A1,1 0 0,0 11,9V7H13A2,2 0 0,0 15,5V4.59C17.93,5.77 20,8.64 20,12C20,14.08 19.2,15.97 17.9,17.39M11,19.93C7.05,19.44 4,16.08 4,12C4,11.38 4.08,10.78 4.21,10.21L9,15V16A2,2 0 0,0 11,18M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"/>
@@ -98,7 +99,8 @@ export class GeoHashMapComponent {
 
   readonly geoHash = signal<GeoHash | undefined>(undefined);
 
-  private markers?: LayerGroup;
+  private geoHashPoints?: LayerGroup;
+  private forecastMarker?: LayerGroup;
   private graticuleLayers?: LayerGroup;
   private geohashCentersLayers?: LayerGroup;
 
@@ -176,10 +178,10 @@ export class GeoHashMapComponent {
       const gh = this.geoHash();
       const map = this.mapComponent().leafletMap();
       if (gh && map) {
-        if (this.markers) {
-          this.markers.remove();
+        if (this.geoHashPoints) {
+          this.geoHashPoints.remove();
         }
-        this.markers = new LayerGroup().addTo(map);
+        this.geoHashPoints = new LayerGroup().addTo(map);
 
         const fracLat = gh.location[0] - Math.floor(gh.location[0]);
         const fracLng = gh.location[1] - Math.floor(gh.location[1]);
@@ -191,7 +193,7 @@ export class GeoHashMapComponent {
             const lng = g.lng + j + fracLng;
             const m = new Marker([lat, lng], {
               icon: new Icon({iconUrl: 'assets/leaflet/marker-icon.png'})
-            }).addTo(this.markers);
+            }).addTo(this.geoHashPoints);
 
             m.bindPopup(this.renderLabel({...gh, location: [lat, lng]}));
 
@@ -211,34 +213,37 @@ export class GeoHashMapComponent {
   }
 
   onForecastClick(): void {
-    const {lng} = this.graticule();
-
-    const isEastOfMinus30 = lng > -30;
-
-    // Get current time in New York
-    const now = new Date();
-    const nyTime = new Date(
-      now.toLocaleString('en-US', {timeZone: 'America/New_York'})
-    );
-
-    const nyHours = nyTime.getHours();
-    const nyMinutes = nyTime.getMinutes();
-    const isAfterNyOpen = nyHours > 9 || (nyHours === 9 && nyMinutes >= 30);
-
-    const forecastAvailable = isEastOfMinus30 && isAfterNyOpen;
-
-    if (forecastAvailable) {
-      const nyDay = nyTime.getDay();
-      const isFriday = nyDay === 5;
-
-      if (isFriday) {
-        alert('extended forecast available');
-      } else {
-        alert('forecast available');
+    const graticule = this.graticule();
+    this.geoHashService.getForecast().subscribe(forecast => {
+      const map = this.mapComponent().leafletMap();
+      if (!map || !forecast || forecast.length === 0) {
+        alert('no forecast available');
+        return;
       }
-    } else {
-      alert('no forecast available');
-    }
+
+      if (this.forecastMarker) {
+        this.forecastMarker.remove();
+      } else {
+        this.forecastMarker = new LayerGroup().addTo(map);
+        forecast.forEach((forecast, index) => {
+          const lat = graticule.lat + forecast.latFraction;
+          const lng = graticule.lng + forecast.lonFraction;
+
+          const g = this.graticule();
+
+          for (let i = -1; i <= 1; i++) {
+            for (let j = -1; j <= 1; j++) {
+              const lat = g.lat + i + forecast.latFraction;
+              const lng = g.lng + j + forecast.lonFraction;
+              const m = new Marker([lat, lng], {
+                icon: new Icon({iconUrl: 'pin-question.png'}),
+                title: forecast.date
+              }).addTo(this.forecastMarker!);
+            }
+          }
+        });
+      }
+    });
   }
 
   onGlobeClick(): void {
