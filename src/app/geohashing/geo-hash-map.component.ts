@@ -96,8 +96,8 @@ export class GeoHashMapComponent {
   });
 
   readonly mapCenter = signal<LatLngExpression>(this.initialCenter);
-
   readonly geoHash = signal<GeoHash | undefined>(undefined);
+  private forecastDisplayed = signal<boolean>(false);
 
   private geoHashPoints?: LayerGroup;
   private forecastMarker?: LayerGroup;
@@ -213,36 +213,34 @@ export class GeoHashMapComponent {
   }
 
   onForecastClick(): void {
-    const graticule = this.graticule();
+
+    if (this.forecastDisplayed()) {
+      this.forecastMarker?.remove();
+      this.forecastDisplayed.set(false);
+      return;
+    }
+
     this.geoHashService.getForecast().subscribe(forecast => {
       const map = this.mapComponent().leafletMap();
       if (!map || !forecast || forecast.length === 0) {
         alert('no forecast available');
         return;
       }
-
-      if (this.forecastMarker) {
-        this.forecastMarker.remove();
-      } else {
-        this.forecastMarker = new LayerGroup().addTo(map);
-        forecast.forEach((forecast, index) => {
-          const lat = graticule.lat + forecast.latFraction;
-          const lng = graticule.lng + forecast.lonFraction;
-
-          const g = this.graticule();
-
-          for (let i = -1; i <= 1; i++) {
-            for (let j = -1; j <= 1; j++) {
-              const lat = g.lat + i + forecast.latFraction;
-              const lng = g.lng + j + forecast.lonFraction;
-              const m = new Marker([lat, lng], {
-                icon: new Icon({iconUrl: 'pin-question.png'}),
-                title: forecast.date
-              }).addTo(this.forecastMarker!);
-            }
+      this.forecastMarker = new LayerGroup().addTo(map);
+      this.forecastDisplayed.set(true);
+      forecast.forEach((forecast, index) => {
+        const g = this.graticule();
+        for (let i = -1; i <= 1; i++) {
+          for (let j = -1; j <= 1; j++) {
+            const lat = g.lat + i + forecast.latFraction;
+            const lng = g.lng + j + forecast.lonFraction;
+            const m = new Marker([lat, lng], {
+              icon: new Icon({iconUrl: 'pin-question.png'}),
+              title: forecast.date
+            }).addTo(this.forecastMarker!);
           }
-        });
-      }
+        }
+      });
     });
   }
 
