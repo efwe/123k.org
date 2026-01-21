@@ -3,6 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {API_URL} from '../app.tokens';
 import {GeoHash} from './geo-hash.model';
+import {Location} from './location.model';
 import {Forecast} from './forecast.model';
 
 @Injectable({
@@ -18,6 +19,10 @@ export class GeoHashService {
 
   getForecast(): Observable<Forecast[]> {
     return this.http.get<Forecast[]>(`${this.apiUrl}/geohash/forecast`);
+  }
+
+  getGlobalHash(): Observable<Location> {
+    return this.http.get<Location>(`${this.apiUrl}/geohash/global`);
   }
 
 }

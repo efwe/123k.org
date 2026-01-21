@@ -98,9 +98,11 @@ export class GeoHashMapComponent {
   readonly mapCenter = signal<LatLngExpression>(this.initialCenter);
   readonly geoHash = signal<GeoHash | undefined>(undefined);
   private forecastDisplayed = signal<boolean>(false);
+  private globalHashDisplayed = signal<boolean>(false);
 
   private geoHashPoints?: LayerGroup;
   private forecastMarker?: LayerGroup;
+  private globalHashMarker?: LayerGroup;
   private graticuleLayers?: LayerGroup;
   private geohashCentersLayers?: LayerGroup;
 
@@ -222,22 +224,24 @@ export class GeoHashMapComponent {
 
     this.geoHashService.getForecast().subscribe(forecast => {
       const map = this.mapComponent().leafletMap();
+      const graticule = this.graticule();
       if (!map || !forecast || forecast.length === 0) {
         alert('no forecast available');
         return;
       }
       this.forecastMarker = new LayerGroup().addTo(map);
       this.forecastDisplayed.set(true);
+      map.setView([graticule.lat + 0.5, graticule.lng + 0.5], 3);
       forecast.forEach((forecast, index) => {
-        const g = this.graticule();
         for (let i = -1; i <= 1; i++) {
           for (let j = -1; j <= 1; j++) {
-            const lat = g.lat + i + forecast.latFraction;
-            const lng = g.lng + j + forecast.lonFraction;
+            const lat = graticule.lat + i + forecast.latFraction;
+            const lng = graticule.lng + j + forecast.lonFraction;
             const m = new Marker([lat, lng], {
               icon: new Icon({iconUrl: 'pin-question.png'}),
               title: forecast.date
             }).addTo(this.forecastMarker!);
+            m.bindPopup(`<b>${forecast.date}</b><br>${lat.toFixed(6)}/${lng.toFixed(6)}`);
           }
         }
       });
@@ -245,7 +249,28 @@ export class GeoHashMapComponent {
   }
 
   onGlobeClick(): void {
-    alert('Globalhash implementation coming soon');
+    if (this.globalHashDisplayed()) {
+      this.globalHashDisplayed.set(false);
+      const map = this.mapComponent().leafletMap();
+      if (map && this.globalHashMarker) {
+        map.removeLayer(this.globalHashMarker)
+        map.setView([this.graticule().lat + 0.5, this.graticule().lng + 0.5], 9);
+      }
+      return;
+    }
+    this.geoHashService.getGlobalHash().subscribe(gh => {
+      this.globalHashDisplayed.set(true);
+      const map = this.mapComponent().leafletMap();
+      if (map) {
+        this.globalHashMarker = new LayerGroup().addTo(map);
+        map.setView(gh.location, 10);
+        const m = new Marker(gh.location, {
+          icon: new Icon({iconUrl: 'pin-target.png'}),
+          title: 'GlobalHash'
+        }).addTo(this.globalHashMarker!);
+        m.bindPopup(`<b>Globalhash</b><br>${gh.location[0].toFixed(6)}/${gh.location[1].toFixed(6)}`);
+      }
+    })
   }
 
   private getToday(): string {
