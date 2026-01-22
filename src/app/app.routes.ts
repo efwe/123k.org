@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { TracksComponent } from './tracks/tracks.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'index', pathMatch: 'full' },
@@ -20,4 +21,6 @@ export const routes: Routes = [
     path: 'tracks',
     loadComponent: () => import('./tracks/tracks.component').then((m) => m.TracksComponent),
   },
+  { path: 'tracks', component: TracksComponent },
+  { path: 'tracks/:id', component: TracksComponent },
 ];

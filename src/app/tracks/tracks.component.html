@@ -1,0 +1,58 @@
+<mat-sidenav-container class="tracks-layout">
+  <mat-sidenav-content>
+    <div class="main-content">
+      <div class="map-panel">
+        <app-map [center]="mapCenter()" />
+      </div>
+
+      <div class="tracks-panel">
+        <div class="tracks-list">
+          @for (track of tracks(); track track.id) {
+            <mat-card
+              class="track-card"
+              [class.selected]="selectedTrack()?.id === track.id"
+              (click)="selectTrack(track.id)"
+            >
+              <mat-card-header>
+                <mat-card-title>{{ track.title }}</mat-card-title>
+                <mat-card-subtitle>{{ track.startTime | date:'short' }}</mat-card-subtitle>
+              </mat-card-header>
+            </mat-card>
+          } @empty {
+            <div class="no-tracks">No tracks found.</div>
+          }
+        </div>
+      </div>
+    </div>
+  </mat-sidenav-content>
+
+  <mat-sidenav
+    #drawer
+    mode="over"
+    position="end"
+    [opened]="isDrawerOpen()"
+    (closedStart)="closeDrawer()"
+    class="track-details-drawer"
+  >
+    @if (selectedTrack(); as track) {
+      <div class="drawer-content">
+        <div class="drawer-header">
+          <h3>{{ track.title }}</h3>
+          <button mat-icon-button (click)="closeDrawer()" aria-label="Close details">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+        <div class="drawer-body">
+          <p class="track-date"><strong>Start:</strong> {{ track.startTime | date:'medium' }}</p>
+          <p class="track-date"><strong>End:</strong> {{ track.endTime | date:'medium' }}</p>
+          <p class="track-distance">
+            <strong>Distance:</strong> {{ (track.distance / 1000).toFixed(2) }} km
+          </p>
+          <div class="track-full-description">
+            {{ track.description }}
+          </div>
+        </div>
+      </div>
+    }
+  </mat-sidenav>
+</mat-sidenav-container>

@@ -1,0 +1,89 @@
+:host
+  display: block
+  height: calc(100dvh - 64px)
+
+.tracks-layout
+  height: 100%
+  background: transparent
+
+.main-content
+  display: grid
+  height: 100%
+
+@media (min-width: 960px)
+  .main-content
+    grid-template-columns: 4fr 1fr
+    grid-template-rows: auto
+    grid-template-areas: "map list"
+
+@media (max-width: 959px)
+  .main-content
+    grid-template-columns: 1fr
+    grid-template-rows: auto auto
+    grid-template-areas: "map" "list"
+
+.map-panel
+  grid-area: map
+  height: 100%
+
+.tracks-panel
+  grid-area: list
+  height: 100%
+  overflow-y: auto
+  border-left: 1px solid rgba(0, 0, 0, 0.12)
+
+.tracks-list
+  padding: 0.5rem
+  display: flex
+  flex-direction: column
+  gap: 0.5rem
+
+.track-card
+  cursor: pointer
+  transition: background-color 0.2s
+  &:hover
+    background-color: darkslategray
+    color: white
+  &:focus
+    outline: 2px solid #3f51b5
+    background-color: darkslategray
+    color: white
+
+.track-card.selected
+  background-color: darkslategray
+  color: white
+
+.no-tracks
+  padding: 1rem
+  text-align: center
+  color: rgba(0, 0, 0, 0.54)
+
+.track-details-drawer
+  width: 100%
+  max-width: 400px
+
+.drawer-content
+  display: flex
+  flex-direction: column
+  height: 100%
+
+.drawer-header
+  display: flex
+  justify-content: space-between
+  align-items: center
+  padding: 1rem
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12)
+  h3
+    margin: 0
+
+.drawer-body
+  padding: 1rem
+  overflow-y: auto
+
+.track-date
+  margin-bottom: 0.5rem
+
+.track-full-description
+  margin-top: 1rem
+  line-height: 1.5
+  white-space: pre-wrap
