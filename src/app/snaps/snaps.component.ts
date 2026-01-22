@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, computed, inject, input, linkedSignal, signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject, input, linkedSignal, output, signal} from '@angular/core';
 import {SnapCardComponent} from './snap-card.component';
 import {MatPaginatorModule, PageEvent} from '@angular/material/paginator';
 import {Snap} from './snap.model';
@@ -12,7 +12,7 @@ import {map} from 'rxjs/operators';
   template: `
     <div class="snap-layout">
       @for (snap of pagedSnaps(); track snap.id) {
-        <app-snap-card [snap]="snap" />
+        <app-snap-card [snap]="snap" (cardClick)="snapClick.emit($event)" />
       } @empty {
         <p>No snaps in this area.</p>
       }
@@ -56,6 +56,7 @@ export class SnapsComponent {
   );
 
   snaps = input.required<Snap[]>();
+  snapClick = output<Snap>();
   pageSize = linkedSignal(() => (this.isLargeScreen() ? 12 as number : 5 as number));
   pageIndex = linkedSignal({
     source: this.snaps,

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
 import {DatePipe, NgOptimizedImage} from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -9,7 +9,7 @@ import { Snap } from './snap.model';
   selector: 'app-snap-card',
   imports: [NgOptimizedImage, MatCardModule, MatButtonModule, MatDialogModule],
   template: `
-    <mat-card class="snap-card" (click)="openImage()" (keydown.enter)="openImage()" tabindex="0" role="button" [attr.aria-label]="'View ' + snap().title">
+    <mat-card class="snap-card" (click)="onCardClick()" (keydown.enter)="onCardClick()" tabindex="0" role="button" [attr.aria-label]="'View ' + snap().title">
       <div class="thumbnail-container">
         <img mat-card-image
              [ngSrc]="snap().imageUrl"
@@ -40,7 +40,12 @@ import { Snap } from './snap.model';
 })
 export class SnapCardComponent {
   snap = input.required<Snap>();
+  cardClick = output<Snap>();
   private dialog = inject(MatDialog);
+
+  onCardClick() {
+    this.cardClick.emit(this.snap());
+  }
 
   openImage() {
     this.dialog.open(SnapImageDialogComponent, {

@@ -17,10 +17,19 @@ export class Main {
   private snapsService = inject(SnapsService);
 
   snaps = signal<Snap[]>([]);
+  selectedSnap = signal<Snap | undefined>(undefined);
 
   onBoundsChange(bounds: LatLngBounds) {
     this.snapsService.getSnaps(bounds).subscribe(snaps => {
       this.snaps.set(snaps);
     });
+  }
+
+  onSnapSelected(snap: Snap) {
+    this.selectedSnap.set(snap);
+  }
+
+  onClearSelection() {
+    this.selectedSnap.set(undefined);
   }
 }

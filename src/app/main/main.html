@@ -1,9 +1,14 @@
 <div class="map-layout">
   <div class="map-panel">
-    <app-snaps-map [snaps]="snaps()" (boundsChange)="onBoundsChange($event)"/>
+    <app-snaps-map
+      [snaps]="snaps()"
+      [selectedSnap]="selectedSnap()"
+      (boundsChange)="onBoundsChange($event)"
+      (clearSelection)="onClearSelection()">
+    </app-snaps-map>
   </div>
 
   <div class="snap-panel">
-    <app-snaps [snaps]="snaps()"/>
+    <app-snaps [snaps]="snaps()" (snapClick)="onSnapSelected($event)"/>
   </div>
 </div>
