@@ -16,4 +16,8 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./geohashing/geo-hash-map.component').then((m) => m.GeoHashMapComponent),
   },
+  {
+    path: 'tracks',
+    loadComponent: () => import('./tracks/tracks.component').then((m) => m.TracksComponent),
+  },
 ];

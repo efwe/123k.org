@@ -123,7 +123,7 @@ export class GeoHashMapComponent {
           }).addTo(this.geohashCentersLayers);
         }
       }
-      map?.setZoom(10)
+      map?.setZoom(8)
     });
 
     effect(() => {
