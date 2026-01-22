@@ -194,7 +194,7 @@ export class GeoHashMapComponent {
             const lat = g.lat + i + fracLat;
             const lng = g.lng + j + fracLng;
             const m = new Marker([lat, lng], {
-              icon: new Icon({iconUrl: 'assets/leaflet/marker-icon.png'})
+              icon: new Icon({iconUrl: 'pin-target.png'})
             }).addTo(this.geoHashPoints);
 
             m.bindPopup(this.renderLabel({...gh, location: [lat, lng]}));
