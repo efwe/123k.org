@@ -231,7 +231,7 @@ export class GeoHashMapComponent {
       }
       this.forecastMarker = new LayerGroup().addTo(map);
       this.forecastDisplayed.set(true);
-      map.setView([graticule.lat + 0.5, graticule.lng + 0.5], 3);
+      map.setView([graticule.lat + 0.5, graticule.lng + 0.5], 8);
       forecast.forEach((forecast, index) => {
         for (let i = -1; i <= 1; i++) {
           for (let j = -1; j <= 1; j++) {
@@ -254,7 +254,7 @@ export class GeoHashMapComponent {
       const map = this.mapComponent().leafletMap();
       if (map && this.globalHashMarker) {
         map.removeLayer(this.globalHashMarker)
-        map.setView([this.graticule().lat + 0.5, this.graticule().lng + 0.5], 9);
+        map.setView([this.graticule().lat + 0.5, this.graticule().lng + 0.5], 4);
       }
       return;
     }
